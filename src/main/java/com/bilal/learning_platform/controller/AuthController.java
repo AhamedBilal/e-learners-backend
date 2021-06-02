@@ -17,6 +17,7 @@ import com.bilal.learning_platform.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -72,10 +73,10 @@ public class AuthController {
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
-                roles));
+                roles.get(0)));
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
@@ -94,30 +95,63 @@ public class AuthController {
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
 
-        Set<String> strRoles = signUpRequest.getRole();
-        Set<Role> roles = new HashSet<>();
+        String strRole = signUpRequest.getRole();
+        Role role;
 
-        if (strRoles == null) {
+        if (strRole == null) {
             Role userRole = roleRepository.findByName(ERole.ROLE_STUDENT)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
+            role = userRole;
         } else {
-            strRoles.forEach(role -> {
-                Role adminRole = roleRepository.findByName(ERole.valueOf(role))
-                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                roles.add(adminRole);
-            });
+            Role adminRole = roleRepository.findByName(ERole.valueOf(strRole))
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            role = adminRole;
         }
 
-        user.setRoles(roles);
+        user.setRole(role);
         userRepository.save(user);
 
         return ResponseEntity.ok("User registered successfully!");
     }
 
-    @GetMapping("/test")
-    public String getAll() {
-        return "Hello";
+    @PostMapping("/signup")
+    public ResponseEntity<?> studentSignUp(@Valid @RequestBody SignupRequest signUpRequest) {
+        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Error: Username is already taken!");
+        }
+
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Error: Email is already in use!");
+        }
+
+        // Create new user's account
+        User user = new User(signUpRequest.getUsername(),
+                signUpRequest.getEmail(),
+                encoder.encode(signUpRequest.getPassword()));
+        Role userRole = roleRepository.findByName(ERole.ROLE_STUDENT)
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+        user.setRole(userRole);
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Student registered successfully!");
     }
 
+    @PutMapping("/become-instructor/{id}")
+    @PreAuthorize("#id == authentication.principal.id")
+    public ResponseEntity<?> becomeInstructor(@PathVariable Long id) {
+
+        User user = userRepository.getById(id);
+        Role userRole = roleRepository.findByName(ERole.ROLE_TEACHER)
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+        user.setRole(userRole);
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Teacher registered successfully!");
+    }
 }

@@ -12,17 +12,14 @@ public class JwtResponse {
     private Long id;
     private String username;
     private String email;
-    private List<String> roles = new ArrayList<>();
+    private String role;
 
-    public JwtResponse() {
-    }
-
-    public JwtResponse(String accessToken, Long id, String username, String email, List<String> roles) {
+    public JwtResponse(String accessToken, Long id, String username, String email, String role) {
         this.accessToken = accessToken;
         this.id = id;
         this.username = username;
         this.email = email;
-        this.roles = roles;
+        this.role = role;
     }
 
     public String getAccessToken() {
@@ -57,11 +54,22 @@ public class JwtResponse {
         this.email = email;
     }
 
-    public List<String> getRoles() {
-        return roles;
+    public String getRole() {
+        return role;
     }
 
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return "JwtResponse{" +
+                "accessToken='" + accessToken + '\'' +
+                ", id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
+                '}';
     }
 }
