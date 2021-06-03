@@ -24,8 +24,8 @@ public class Course {
     private Level level;
     @ManyToOne()
     private Instructor instructor;
-//    @OneToMany(mappedBy = "course")
-//    private List<Section> sections = new ArrayList<>();
+    @OneToMany(mappedBy = "course")
+    private List<Section> sections = new ArrayList<>();
 
 
     public Long getId() {

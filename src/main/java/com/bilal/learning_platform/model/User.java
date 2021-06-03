@@ -4,7 +4,9 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -31,8 +33,18 @@ public class User {
     @Size(max = 120)
     private String password;
 
+    private String fname;
+    private String lname;
+    private String headline;
+    private String bio;
+    private String website;
+    private String twitter;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Role role;
+
+    @OneToMany
+    private final List<CourseData> course = new ArrayList<>();
 
     public User() {
     }
@@ -41,6 +53,15 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public User(String fname, String lname, String headline, String bio, String website, String twitter) {
+        this.fname = fname;
+        this.lname = lname;
+        this.headline = headline;
+        this.bio = bio;
+        this.website = website;
+        this.twitter = twitter;
     }
 
     public Long getId() {
@@ -81,5 +102,57 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public List<CourseData> getCourse() {
+        return course;
+    }
+
+    public String getFname() {
+        return fname;
+    }
+
+    public void setFname(String fname) {
+        this.fname = fname;
+    }
+
+    public String getLname() {
+        return lname;
+    }
+
+    public void setLname(String lname) {
+        this.lname = lname;
+    }
+
+    public String getHeadline() {
+        return headline;
+    }
+
+    public void setHeadline(String headline) {
+        this.headline = headline;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public String getTwitter() {
+        return twitter;
+    }
+
+    public void setTwitter(String twitter) {
+        this.twitter = twitter;
     }
 }
