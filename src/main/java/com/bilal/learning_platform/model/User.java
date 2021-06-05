@@ -39,6 +39,7 @@ public class User {
     private String bio;
     private String website;
     private String twitter;
+    private String profilePic;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Role role;
@@ -157,6 +158,14 @@ public class User {
         this.twitter = twitter;
     }
 
+    public String getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -170,6 +179,7 @@ public class User {
                 ", bio='" + bio + '\'' +
                 ", website='" + website + '\'' +
                 ", twitter='" + twitter + '\'' +
+                ", profilePic='" + profilePic + '\'' +
                 ", role=" + role +
                 ", course=" + course +
                 '}';

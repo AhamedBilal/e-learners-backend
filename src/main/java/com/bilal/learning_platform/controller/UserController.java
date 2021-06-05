@@ -6,16 +6,16 @@ import com.bilal.learning_platform.payload.request.ChangePasswordRequest;
 import com.bilal.learning_platform.payload.request.UserProfileRequest;
 import com.bilal.learning_platform.payload.response.MessageResponse;
 import com.bilal.learning_platform.repository.UserRepository;
+import com.bilal.learning_platform.storage.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -25,12 +25,13 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
-
+    private final StorageService storageService;
 
     @Autowired
-    public UserController(UserRepository userRepository, PasswordEncoder encoder) {
+    public UserController(UserRepository userRepository, PasswordEncoder encoder, StorageService storageService) {
         this.userRepository = userRepository;
         this.encoder = encoder;
+        this.storageService = storageService;
     }
 
     @PutMapping("/profile")
@@ -63,6 +64,17 @@ public class UserController {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         userRepository.save(user);
+        return ResponseEntity.ok(new MessageResponse("Successfully Updated!"));
+    }
+
+    @PutMapping("/edit-photo")
+    public ResponseEntity<?> changePhoto(@RequestParam("file") MultipartFile file, @RequestParam("name") String fileName, Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new RuntimeException("Error: User is not found."));
+        storageService.store(file, fileName);
+        user.setProfilePic(fileName);
+
+        userRepository.save(user);
+
         return ResponseEntity.ok(new MessageResponse("Successfully Updated!"));
     }
 

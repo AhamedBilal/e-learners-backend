@@ -21,6 +21,11 @@ public class UserDto {
     private String lname;
     private String headline;
     private String bio;
+    private String profilePic;
+    private String website;
+    private String twitter;
+    private String role;
+    private final List<CourseData> course = new ArrayList<>();
 
     public UserDto(User u) {
         this.id = u.getId();
@@ -32,10 +37,11 @@ public class UserDto {
         this.bio = u.getBio();
         this.website = u.getWebsite();
         this.twitter = u.getTwitter();
+        this.profilePic = u.getProfilePic();
         this.role = u.getRole().getName().name();
     }
 
-    public UserDto(Long id, String username, String email, String fname, String lname, String headline, String bio, String website, String twitter, String role) {
+    public UserDto(Long id, String username, String email, String fname, String lname, String headline, String bio, String profilePic, String website, String twitter, String role) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -43,6 +49,7 @@ public class UserDto {
         this.lname = lname;
         this.headline = headline;
         this.bio = bio;
+        this.profilePic = profilePic;
         this.website = website;
         this.twitter = twitter;
         this.role = role;
@@ -128,14 +135,18 @@ public class UserDto {
         this.role = role;
     }
 
+
     public List<CourseData> getCourse() {
         return course;
     }
 
-    private String website;
-    private String twitter;
-    private String role;
-    private final List<CourseData> course = new ArrayList<>();
+    public String getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
+    }
 
     public UserDto() {
     }
