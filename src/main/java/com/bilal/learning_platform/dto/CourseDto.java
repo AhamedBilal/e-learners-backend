@@ -1,16 +1,16 @@
-package com.bilal.learning_platform.model;
+package com.bilal.learning_platform.dto;
 
-import com.bilal.learning_platform.dto.CourseDto;
+import com.bilal.learning_platform.model.Category;
+import com.bilal.learning_platform.model.Instructor;
+import com.bilal.learning_platform.model.Level;
+import com.bilal.learning_platform.model.Section;
 
-import javax.persistence.*;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-public class Course {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class CourseDto {
     private String title;
     private String subtitle;
     private String description;
@@ -19,33 +19,8 @@ public class Course {
     private Integer price;
     private final Boolean isPublished = false;
     private final Boolean isApproved = false;
-
-    @ManyToOne()
-    private Category category;
-    @ManyToOne()
-    private Level level;
-    @ManyToOne()
-    private Instructor instructor;
-    @OneToMany(mappedBy = "course")
-    private List<Section> sections = new ArrayList<>();
-
-    public Course() {
-    }
-
-    public Course(CourseDto dto) {
-        this.title = dto.getTitle();
-        this.subtitle = dto.getSubtitle();
-        this.description = dto.getDescription();
-        this.imageUrl = dto.getImageUrl();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private Long categoryId;
+    private Long levelId;
 
     public String getTitle() {
         return title;
@@ -103,27 +78,19 @@ public class Course {
         return isApproved;
     }
 
-    public Category getCategory() {
-        return category;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
-    public Level getLevel() {
-        return level;
+    public Long getLevelId() {
+        return levelId;
     }
 
-    public void setLevel(Level level) {
-        this.level = level;
-    }
-
-    public Instructor getInstructor() {
-        return instructor;
-    }
-
-    public void setInstructor(Instructor instructor) {
-        this.instructor = instructor;
+    public void setLevelId(Long levelId) {
+        this.levelId = levelId;
     }
 }

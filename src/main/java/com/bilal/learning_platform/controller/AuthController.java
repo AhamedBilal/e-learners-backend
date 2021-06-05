@@ -2,13 +2,14 @@ package com.bilal.learning_platform.controller;
 
 import com.bilal.learning_platform.dto.UserDto;
 import com.bilal.learning_platform.model.ERole;
+import com.bilal.learning_platform.model.Instructor;
 import com.bilal.learning_platform.model.Role;
 import com.bilal.learning_platform.model.User;
 import com.bilal.learning_platform.payload.request.LoginRequest;
 import com.bilal.learning_platform.payload.request.SignupRequest;
 import com.bilal.learning_platform.payload.response.JwtResponse;
 import com.bilal.learning_platform.payload.response.MessageResponse;
-import com.bilal.learning_platform.payload.response.StandardResponse;
+import com.bilal.learning_platform.repository.InstructorRepository;
 import com.bilal.learning_platform.repository.RoleRepository;
 import com.bilal.learning_platform.repository.UserRepository;
 import com.bilal.learning_platform.security.service.UserDetailsImpl;
@@ -16,20 +17,17 @@ import com.bilal.learning_platform.security.jwt.JwtUtils;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -43,15 +41,18 @@ public class AuthController {
 
     private final RoleRepository roleRepository;
 
+    private final InstructorRepository instructorRepository;
+
     private final PasswordEncoder encoder;
 
     private final JwtUtils jwtUtils;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder, JwtUtils jwtUtils) {
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, InstructorRepository instructorRepository, PasswordEncoder encoder, JwtUtils jwtUtils) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.instructorRepository = instructorRepository;
         this.encoder = encoder;
         this.jwtUtils = jwtUtils;
     }
@@ -143,6 +144,7 @@ public class AuthController {
     }
 
     @PutMapping("/become-instructor")
+    @Transactional
     public ResponseEntity<?> becomeInstructor(Authentication authentication) {
 
         User user = userRepository.findByUsername(authentication.getName())
@@ -151,7 +153,10 @@ public class AuthController {
                 .orElseThrow(() -> new RuntimeException("Role is not found."));
 
         user.setRole(userRole);
+        Instructor instructor = new Instructor();
+        instructor.setUser(user);
         userRepository.save(user);
+        instructorRepository.save(instructor);
 
         return ResponseEntity.ok(new MessageResponse("Teacher registered successfully!"));
     }
