@@ -17,6 +17,8 @@ public class SignupRequest {
     private String email;
 
     private String role;
+    private String fname;
+    private String lanme;
 
     @NotBlank
     @Size(min = 6, max = 40)
@@ -52,5 +54,21 @@ public class SignupRequest {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getFname() {
+        return fname;
+    }
+
+    public void setFname(String fname) {
+        this.fname = fname;
+    }
+
+    public String getLanme() {
+        return lanme;
+    }
+
+    public void setLanme(String lanme) {
+        this.lanme = lanme;
     }
 }

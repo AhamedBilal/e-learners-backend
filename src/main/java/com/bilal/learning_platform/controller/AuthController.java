@@ -1,5 +1,6 @@
 package com.bilal.learning_platform.controller;
 
+import com.bilal.learning_platform.dto.UserDto;
 import com.bilal.learning_platform.model.ERole;
 import com.bilal.learning_platform.model.Role;
 import com.bilal.learning_platform.model.User;
@@ -59,7 +60,7 @@ public class AuthController {
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
@@ -69,11 +70,9 @@ public class AuthController {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles.get(0)));
+        User user = userRepository.getById(userDetails.getId());
+
+        return ResponseEntity.ok(new JwtResponse(jwt, new UserDto(user)));
     }
 
     @PostMapping("/register")
@@ -119,13 +118,13 @@ public class AuthController {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
-                    .body("Error: Username is already taken!");
+                    .body("Username is already taken!");
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
-                    .body("Error: Email is already in use!");
+                    .body("Email is already in use!");
         }
 
         // Create new user's account
@@ -133,25 +132,27 @@ public class AuthController {
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
         Role userRole = roleRepository.findByName(ERole.ROLE_STUDENT)
-                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                .orElseThrow(() -> new RuntimeException("Role is not found."));
 
         user.setRole(userRole);
+        user.setFname(signUpRequest.getFname());
+        user.setLname(signUpRequest.getLanme());
         userRepository.save(user);
-
-        return ResponseEntity.ok("Student registered successfully!");
+        System.out.println(user);
+        return ResponseEntity.ok(new MessageResponse("Student registered successfully!"));
     }
 
-    @PutMapping("/become-instructor/{id}")
-    @PreAuthorize("#id == authentication.principal.id")
-    public ResponseEntity<?> becomeInstructor(@PathVariable Long id) {
+    @PutMapping("/become-instructor")
+    public ResponseEntity<?> becomeInstructor(Authentication authentication) {
 
-        User user = userRepository.getById(id);
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User is not loggedIn."));
         Role userRole = roleRepository.findByName(ERole.ROLE_TEACHER)
-                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                .orElseThrow(() -> new RuntimeException("Role is not found."));
 
         user.setRole(userRole);
         userRepository.save(user);
 
-        return ResponseEntity.ok("Teacher registered successfully!");
+        return ResponseEntity.ok(new MessageResponse("Teacher registered successfully!"));
     }
 }

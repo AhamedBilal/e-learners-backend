@@ -1,8 +1,10 @@
 package com.bilal.learning_platform.controller;
 
+import com.bilal.learning_platform.dto.UserDto;
 import com.bilal.learning_platform.model.User;
 import com.bilal.learning_platform.payload.request.ChangePasswordRequest;
 import com.bilal.learning_platform.payload.request.UserProfileRequest;
+import com.bilal.learning_platform.payload.response.MessageResponse;
 import com.bilal.learning_platform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
 
     private final UserRepository userRepository;
@@ -43,7 +46,7 @@ public class UserController {
         user.setWebsite(userProfileRequest.getWebsite());
         user.setTwitter(userProfileRequest.getTwitter());
 
-        return ResponseEntity.ok("Successfully Updated!");
+        return ResponseEntity.ok(new UserDto(user));
     }
 
     @PutMapping("/changePassword")
@@ -59,22 +62,22 @@ public class UserController {
         user.setPassword(encoder.encode(request.getUsername()));
         user.setPassword(encoder.encode(request.getEmail()));
         userRepository.save(user);
-        return ResponseEntity.ok("Successfully Updated!");
+        return ResponseEntity.ok(new MessageResponse("Successfully Updated!"));
     }
 
     @GetMapping("/loggedin")
-    public ResponseEntity<?> getUserData() {
-        User user = userRepository.findByEmail(
-                SecurityContextHolder.getContext().getAuthentication().getName())
+    public ResponseEntity<?> getUserData(Authentication authentication) {
+        System.out.println(authentication.getName());
+        User user = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("Error: User is not found."));
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(new UserDto(user));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserDataById(@PathVariable Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Error: User is not found."));
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(new UserDto(user));
     }
 
     @GetMapping()

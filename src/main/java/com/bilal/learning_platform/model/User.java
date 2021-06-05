@@ -46,8 +46,6 @@ public class User {
     @OneToMany
     private final List<CourseData> course = new ArrayList<>();
 
-    public User() {
-    }
 
     public User(String username, String email, String password) {
         this.username = username;
@@ -62,6 +60,9 @@ public class User {
         this.bio = bio;
         this.website = website;
         this.twitter = twitter;
+    }
+
+    public User() {
     }
 
     public Long getId() {
@@ -154,5 +155,23 @@ public class User {
 
     public void setTwitter(String twitter) {
         this.twitter = twitter;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", fname='" + fname + '\'' +
+                ", lname='" + lname + '\'' +
+                ", headline='" + headline + '\'' +
+                ", bio='" + bio + '\'' +
+                ", website='" + website + '\'' +
+                ", twitter='" + twitter + '\'' +
+                ", role=" + role +
+                ", course=" + course +
+                '}';
     }
 }

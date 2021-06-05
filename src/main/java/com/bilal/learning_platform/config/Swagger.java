@@ -54,8 +54,7 @@ public class Swagger extends WebMvcConfigurerAdapter {
     public Docket consumerSwaggerConfiguration() {
         Docket docket = new Docket(DocumentationType.SWAGGER_2);
         docket.select()
-                .apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("com.bilal.learning_platform.controller"))
                 .build().groupName("Consumer")
                 .directModelSubstitute(LocalDate.class, String.class)
                 .directModelSubstitute(Time.class, String.class)

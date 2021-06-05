@@ -1,6 +1,8 @@
 package com.bilal.learning_platform.payload.response;
 
+import com.bilal.learning_platform.dto.UserDto;
 import com.bilal.learning_platform.model.Role;
+import com.bilal.learning_platform.model.User;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,17 +11,11 @@ import java.util.Set;
 
 public class JwtResponse {
     private String accessToken;
-    private Long id;
-    private String username;
-    private String email;
-    private String role;
+    private UserDto user;
 
-    public JwtResponse(String accessToken, Long id, String username, String email, String role) {
+    public JwtResponse(String accessToken, UserDto user) {
         this.accessToken = accessToken;
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.role = role;
+        this.user = user;
     }
 
     public String getAccessToken() {
@@ -30,46 +26,11 @@ public class JwtResponse {
         this.accessToken = accessToken;
     }
 
-    public Long getId() {
-        return id;
+    public UserDto getUser() {
+        return user;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    @Override
-    public String toString() {
-        return "JwtResponse{" +
-                "accessToken='" + accessToken + '\'' +
-                ", id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", role='" + role + '\'' +
-                '}';
+    public void setUser(UserDto user) {
+        this.user = user;
     }
 }
