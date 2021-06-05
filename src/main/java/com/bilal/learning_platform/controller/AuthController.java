@@ -145,7 +145,7 @@ public class AuthController {
     @PutMapping("/become-instructor")
     public ResponseEntity<?> becomeInstructor(Authentication authentication) {
 
-        User user = userRepository.findByEmail(authentication.getName())
+        User user = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User is not loggedIn."));
         Role userRole = roleRepository.findByName(ERole.ROLE_TEACHER)
                 .orElseThrow(() -> new RuntimeException("Role is not found."));

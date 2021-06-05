@@ -34,10 +34,9 @@ public class UserController {
     }
 
     @PutMapping("/profile")
-    @PreAuthorize("#userProfileRequest.id == authentication.principal.id")
-    public ResponseEntity<?> updateProfile(@Valid @RequestBody UserProfileRequest userProfileRequest) {
+    public ResponseEntity<?> updateProfile(@Valid @RequestBody UserProfileRequest userProfileRequest, Authentication authentication) {
 
-        User user = userRepository.findById(userProfileRequest.getId()).orElseThrow(() -> new RuntimeException("Error: User is not found."));
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new RuntimeException("Error: User is not found."));
 
         user.setFname(userProfileRequest.getFname());
         user.setLname(userProfileRequest.getLname());
@@ -46,21 +45,23 @@ public class UserController {
         user.setWebsite(userProfileRequest.getWebsite());
         user.setTwitter(userProfileRequest.getTwitter());
 
+        userRepository.save(user);
+
         return ResponseEntity.ok(new UserDto(user));
     }
 
     @PutMapping("/changePassword")
     public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest request, Authentication authentication) {
 
-        User user = userRepository.findByEmail(
-                SecurityContextHolder.getContext().getAuthentication().getName())
+        User user = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("Error: User is not found."));
-        if (!encoder.matches(user.getPassword(), request.getPassword()))
+        if (!encoder.matches(request.getOldPassword(), user.getPassword())) {
             return ResponseEntity.badRequest().body("Password is not matches.");
+        }
 
         user.setPassword(encoder.encode(request.getPassword()));
-        user.setPassword(encoder.encode(request.getUsername()));
-        user.setPassword(encoder.encode(request.getEmail()));
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
         userRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("Successfully Updated!"));
     }
