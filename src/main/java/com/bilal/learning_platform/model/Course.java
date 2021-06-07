@@ -1,18 +1,24 @@
 package com.bilal.learning_platform.model;
 
 import com.bilal.learning_platform.dto.CourseDto;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String subtitle;
+    @Column(length = 10000)
     private String description;
     private String language;
     private String imageUrl;
@@ -20,13 +26,19 @@ public class Course {
     private final Boolean isPublished = false;
     private final Boolean isApproved = false;
 
+    @CreatedDate
+    private Date createdAt;
+
+    @LastModifiedDate
+    private Date updatedAt;
+
     @ManyToOne()
     private Category category;
     @ManyToOne()
     private Level level;
     @ManyToOne()
     private Instructor instructor;
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", cascade = {CascadeType.REMOVE})
     private List<Section> sections = new ArrayList<>();
 
     public Course() {
@@ -37,6 +49,20 @@ public class Course {
         this.subtitle = dto.getSubtitle();
         this.description = dto.getDescription();
         this.imageUrl = dto.getImageUrl();
+    }
+
+    public Course(Long id, String title, String subtitle, String description, String language, String imageUrl, Integer price, Category category, Level level, Instructor instructor, List<Section> sections) {
+        this.id = id;
+        this.title = title;
+        this.subtitle = subtitle;
+        this.description = description;
+        this.language = language;
+        this.imageUrl = imageUrl;
+        this.price = price;
+        this.category = category;
+        this.level = level;
+        this.instructor = instructor;
+        this.sections = sections;
     }
 
     public Long getId() {
@@ -125,5 +151,29 @@ public class Course {
 
     public void setInstructor(Instructor instructor) {
         this.instructor = instructor;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public List<Section> getSections() {
+        return sections;
+    }
+
+    public void setSections(List<Section> sections) {
+        this.sections = sections;
     }
 }

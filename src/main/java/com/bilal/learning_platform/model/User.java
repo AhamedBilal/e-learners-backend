@@ -36,6 +36,7 @@ public class User {
     private String fname;
     private String lname;
     private String headline;
+    @Column(length = 5000)
     private String bio;
     private String website;
     private String twitter;

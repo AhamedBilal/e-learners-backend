@@ -12,7 +12,7 @@ public class Section {
     private String title;
     private String description;
     private int indexNumber;
-    @OneToMany(mappedBy = "section")
+    @OneToMany(mappedBy = "section", cascade = {CascadeType.REMOVE})
     private List<Lesson> lessons = new ArrayList<>();
     @ManyToOne()
     private Course course;

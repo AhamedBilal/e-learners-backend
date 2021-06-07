@@ -1,15 +1,10 @@
 package com.bilal.learning_platform.controller;
 
 import com.bilal.learning_platform.dto.CourseDto;
-import com.bilal.learning_platform.model.Category;
-import com.bilal.learning_platform.model.Course;
-import com.bilal.learning_platform.model.Instructor;
-import com.bilal.learning_platform.model.Level;
+import com.bilal.learning_platform.dto.SectionDto;
+import com.bilal.learning_platform.model.*;
 import com.bilal.learning_platform.payload.response.MessageResponse;
-import com.bilal.learning_platform.repository.CategoryRepository;
-import com.bilal.learning_platform.repository.CourseRepository;
-import com.bilal.learning_platform.repository.InstructorRepository;
-import com.bilal.learning_platform.repository.LevelRepository;
+import com.bilal.learning_platform.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -25,13 +21,17 @@ import java.util.List;
 public class CourseController {
 
     private final CourseRepository courseRepository;
+    private final SectionRepository sectionRepository;
+    private final LessonRepository lessonRepository;
     private final InstructorRepository instructorRepository;
     private final CategoryRepository categoryRepository;
     private final LevelRepository levelRepository;
 
     @Autowired
-    public CourseController(CourseRepository courseRepository, InstructorRepository instructorRepository, CategoryRepository categoryRepository, LevelRepository levelRepository) {
+    public CourseController(CourseRepository courseRepository, SectionRepository sectionRepository, LessonRepository lessonRepository, InstructorRepository instructorRepository, CategoryRepository categoryRepository, LevelRepository levelRepository) {
         this.courseRepository = courseRepository;
+        this.sectionRepository = sectionRepository;
+        this.lessonRepository = lessonRepository;
         this.instructorRepository = instructorRepository;
         this.categoryRepository = categoryRepository;
         this.levelRepository = levelRepository;
@@ -39,9 +39,30 @@ public class CourseController {
 
     @GetMapping
     public ResponseEntity<?> getAll() {
-        List<Category> all = categoryRepository.findAll();
+        List<Course> all = courseRepository.findAll();
         return ResponseEntity.ok(all);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        Course course = courseRepository.findById(id).orElseThrow(() -> new RuntimeException("Course not Found!"));
+        CourseDto courseDto = new CourseDto(course);
+        return ResponseEntity.ok(courseDto);
+    }
+
+    @GetMapping("/instructor")
+    public ResponseEntity<?> getAllCoursesForInstructor(Authentication authentication) {
+        List<CourseDto> all = courseRepository.findCourseByInstructor_User_Username(authentication.getName()).stream().map(CourseDto::new).collect(Collectors.toList());
+        System.out.println("Courses : " + all);
+        return ResponseEntity.ok(all);
+    }
+
+    @GetMapping("/instructor/{id}")
+    public ResponseEntity<?> getAllCoursesByUserId(@PathVariable Long id) {
+        List<CourseDto> all = courseRepository.findCourseByInstructor_User_Id(id).stream().map(CourseDto::new).collect(Collectors.toList());
+        return ResponseEntity.ok(all);
+    }
+
 
     @PostMapping
     public ResponseEntity<?> addCourse(@RequestBody CourseDto course, Authentication authentication) {
@@ -57,5 +78,7 @@ public class CourseController {
         Course save = courseRepository.save(newCourse);
         return ResponseEntity.ok(save.getId());
     }
+
+
 
 }
