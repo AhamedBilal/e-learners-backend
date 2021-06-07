@@ -41,8 +41,8 @@ public class CourseDto {
         this.language = c.getLanguage();
         this.imageUrl = c.getImageUrl();
         this.price = c.getPrice();
-        this.isPublished = c.getPublished();
-        this.isApproved = c.getApproved();
+        this.isPublished = c.getIsPublished();
+        this.isApproved = c.getIsApproved();
         this.categoryId = c.getCategory().getId();
         this.levelId = c.getLevel().getId();
         this.createdAt = c.getCreatedAt();

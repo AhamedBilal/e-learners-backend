@@ -3,9 +3,11 @@ package com.bilal.learning_platform.controller;
 import com.bilal.learning_platform.dto.CourseDto;
 import com.bilal.learning_platform.dto.SectionDto;
 import com.bilal.learning_platform.model.*;
+import com.bilal.learning_platform.payload.response.CourseResponse;
 import com.bilal.learning_platform.payload.response.MessageResponse;
 import com.bilal.learning_platform.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,17 +23,13 @@ import java.util.stream.Collectors;
 public class CourseController {
 
     private final CourseRepository courseRepository;
-    private final SectionRepository sectionRepository;
-    private final LessonRepository lessonRepository;
     private final InstructorRepository instructorRepository;
     private final CategoryRepository categoryRepository;
     private final LevelRepository levelRepository;
 
     @Autowired
-    public CourseController(CourseRepository courseRepository, SectionRepository sectionRepository, LessonRepository lessonRepository, InstructorRepository instructorRepository, CategoryRepository categoryRepository, LevelRepository levelRepository) {
+    public CourseController(CourseRepository courseRepository, InstructorRepository instructorRepository, CategoryRepository categoryRepository, LevelRepository levelRepository) {
         this.courseRepository = courseRepository;
-        this.sectionRepository = sectionRepository;
-        this.lessonRepository = lessonRepository;
         this.instructorRepository = instructorRepository;
         this.categoryRepository = categoryRepository;
         this.levelRepository = levelRepository;
@@ -39,15 +37,15 @@ public class CourseController {
 
     @GetMapping
     public ResponseEntity<?> getAll() {
-        List<Course> all = courseRepository.findAll();
+        List<CourseResponse> all = courseRepository.findAll().stream().map(CourseResponse::new).collect(Collectors.toList());
         return ResponseEntity.ok(all);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
         Course course = courseRepository.findById(id).orElseThrow(() -> new RuntimeException("Course not Found!"));
-        CourseDto courseDto = new CourseDto(course);
-        return ResponseEntity.ok(courseDto);
+        CourseResponse courseResponse = new CourseResponse(course);
+        return ResponseEntity.ok(courseResponse);
     }
 
     @GetMapping("/instructor")
@@ -80,5 +78,10 @@ public class CourseController {
     }
 
 
+    @GetMapping("/top")
+    public ResponseEntity<?> getTopCourses() {
+        List<CourseResponse> courseResponses = courseRepository.findAll(Sort.by(Sort.Direction.DESC, "enrolled")).stream().map(CourseResponse::new).collect(Collectors.toList());;
+        return ResponseEntity.ok(courseResponses);
+    }
 
 }
