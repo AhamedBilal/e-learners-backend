@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +25,7 @@ public class CourseResponse {
     private String instructorName;
     private String instructorUserName;
     private String imageUrl;
-    private Integer price;
+    private BigDecimal price;
     private Boolean isPublished;
     private Boolean isApproved;
     private Long categoryId;

@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +25,7 @@ public class CourseDto {
     private String description;
     private String language;
     private String imageUrl;
-    private Integer price;
+    private BigDecimal price;
     private Boolean isPublished;
     private Boolean isApproved;
     private Long categoryId;

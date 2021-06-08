@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -16,5 +17,5 @@ public class Price {
     @Id
     @GeneratedValue
     private Long id;
-    private double price;
+    private BigDecimal price;
 }

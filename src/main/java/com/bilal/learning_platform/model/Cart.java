@@ -1,9 +1,16 @@
 package com.bilal.learning_platform.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 public class Cart {
     @Id
@@ -11,26 +18,6 @@ public class Cart {
     private Long id;
     @OneToOne()
     private User user;
-    @ManyToMany()
-    private final List<Course> courses = new ArrayList<>();
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public List<Course> getCourses() {
-        return courses;
-    }
+    @ManyToMany(cascade = {CascadeType.REMOVE})
+    private List<Course> courses = new ArrayList<>();
 }

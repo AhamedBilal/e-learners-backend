@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +29,7 @@ public class Course {
     private String description;
     private String language;
     private String imageUrl;
-    private Integer price = 0;
+    private BigDecimal price = BigDecimal.valueOf(0);
     private Integer enrolled = 0;
     private final Boolean isPublished = false;
     private final Boolean isApproved = false;
@@ -55,7 +56,7 @@ public class Course {
         this.imageUrl = dto.getImageUrl();
     }
 
-    public Course(Long id, String title, String subtitle, String description, String language, String imageUrl, Integer price, Category category, Level level, Instructor instructor, List<Section> sections) {
+    public Course(Long id, String title, String subtitle, String description, String language, String imageUrl, BigDecimal price, Category category, Level level, Instructor instructor, List<Section> sections) {
         this.id = id;
         this.title = title;
         this.subtitle = subtitle;
@@ -67,5 +68,17 @@ public class Course {
         this.level = level;
         this.instructor = instructor;
         this.sections = sections;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Course)) {
+            return false;
+        }
+        Course course = (Course) obj;
+        return id.equals(course.id);
     }
 }
