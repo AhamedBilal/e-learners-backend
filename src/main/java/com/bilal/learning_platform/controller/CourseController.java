@@ -80,7 +80,7 @@ public class CourseController {
 
     @GetMapping("/top")
     public ResponseEntity<?> getTopCourses() {
-        List<CourseResponse> courseResponses = courseRepository.findAll(Sort.by(Sort.Direction.DESC, "enrolled")).stream().map(CourseResponse::new).collect(Collectors.toList());;
+        List<CourseResponse> courseResponses = courseRepository.findAll(Sort.by(Sort.Direction.DESC, "students")).stream().map(CourseResponse::new).collect(Collectors.toList());;
         return ResponseEntity.ok(courseResponses);
     }
 

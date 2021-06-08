@@ -20,7 +20,7 @@ public class CourseResponse {
     private String title;
     private String subtitle;
     private String description;
-    private Integer enrolled;
+    private Integer students;
     private String language;
     private String instructorName;
     private String instructorUserName;

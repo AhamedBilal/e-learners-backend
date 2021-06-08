@@ -8,8 +8,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 @Entity
 @Getter
@@ -28,4 +28,15 @@ public class Order {
     private User user;
     @OneToMany(mappedBy = "orderId")
     private final List<OrderDetails> orderDetails = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", total=" + total +
+                ", createdAt=" + createdAt +
+                ", user=" + user +
+                ", orderDetails=" + orderDetails +
+                '}';
+    }
 }

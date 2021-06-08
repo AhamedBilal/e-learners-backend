@@ -55,7 +55,7 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     private Role role;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     private final List<CourseData> course = new ArrayList<>();
 
 
