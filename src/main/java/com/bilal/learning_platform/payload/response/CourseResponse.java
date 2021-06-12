@@ -46,6 +46,7 @@ public class CourseResponse {
         this.instructorName = course.getInstructor().getUser().getFname() + " " + (course.getInstructor().getUser().getLname() == null ? "" : course.getInstructor().getUser().getLname());
         this.instructorUserName = course.getInstructor().getUser().getUsername();
         this.imageUrl = course.getImageUrl();
+        this.students = course.getStudents();
         this.price = course.getPrice();
         this.isPublished = course.getIsPublished();
         this.isApproved = course.getIsApproved();

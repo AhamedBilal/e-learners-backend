@@ -31,8 +31,8 @@ public class Course {
     private String imageUrl;
     private BigDecimal price = BigDecimal.valueOf(0);
     private Integer students = 0;
-    private final Boolean isPublished = false;
-    private final Boolean isApproved = false;
+    private Boolean isPublished = false;
+    private Boolean isApproved = false;
 
     @CreatedDate
     private Date createdAt;

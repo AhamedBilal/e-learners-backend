@@ -1,6 +1,7 @@
 package com.bilal.learning_platform.repository;
 
 import com.bilal.learning_platform.model.Instructor;
+import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

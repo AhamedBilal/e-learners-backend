@@ -1,6 +1,7 @@
 package com.bilal.learning_platform.controller;
 
 import com.bilal.learning_platform.dto.CartDto;
+import com.bilal.learning_platform.dto.OrderDto;
 import com.bilal.learning_platform.model.*;
 import com.bilal.learning_platform.payload.request.OrderRequest;
 import com.bilal.learning_platform.repository.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -89,6 +91,12 @@ public class OrderController {
             return ResponseEntity.badRequest().body("No items");
         }
 
+    }
+
+    @GetMapping ("/user")
+    public ResponseEntity<?> getPurcheseHisoryByUserId(Authentication authentication) {
+        List<OrderDto> collect = orderRepository.findAllByUser_Username(authentication.getName()).stream().map(OrderDto::new).collect(Collectors.toList());
+        return ResponseEntity.ok(collect);
     }
 
 }

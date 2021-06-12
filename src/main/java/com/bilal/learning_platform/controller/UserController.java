@@ -93,6 +93,13 @@ public class UserController {
         return ResponseEntity.ok(new UserDto(user));
     }
 
+    @GetMapping("/username/{username}")
+    public ResponseEntity<?> getUserDataById(@PathVariable String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Error: User is not found."));
+        return ResponseEntity.ok(new UserDto(user));
+    }
+
     @GetMapping()
     public ResponseEntity<?> getAllUsers() {
         List<User> users = userRepository.findAll();
